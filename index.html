@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ascreen — сайт V3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&family=Oranienbaum&display=swap">
+<style>
+/* Раскадровка «дизайн-концепт 2»: сетка 1440, поля 20, правая половина с 730.
+   Чёрная «сцена» на скролле: весь экран → левая половина → плашка 237×140.
+   Единый мир макета (чёрный / белый / красный меню), без тёмной темы. */
+:root{
+  --ink:#101010;
+  --paper:#ffffff;
+  --beige:#f5f2ec;
+  --scene:#000000;
+  --menu:#ff1d2e;
+  --rule:#101010;
+  --ph:#e7e7e4;        /* плейсхолдер фото */
+  --ph-ink:#8a8a86;
+  --f-display:"TT Ricks","TT Ricks Trial","Oranienbaum","Times New Roman",serif;
+  --f-text:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --gut:20px;
+  /* типографика тянется от ширины окна: 1440 = макет, ниже ×0.62–0.86, выше до ×1.45 */
+  --fs12:clamp(11px,0.833vw,17px);
+  --fs14:clamp(12px,0.972vw,20px);
+  --fs20:clamp(17px,1.389vw,29px);
+  --fs38:clamp(33px,2.639vw,55px);
+  --fs44:clamp(27px,3.056vw,64px);
+  --fs48:clamp(30px,3.333vw,70px);
+  --fs88:clamp(55px,6.111vw,128px);
+  --fs140:clamp(87px,9.722vw,203px);
+
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-stopped{overflow:hidden}
+body{margin:0;background:var(--paper);color:var(--ink);font:500 var(--fs14)/1.21 var(--f-text);letter-spacing:-.01em;overflow-x:hidden;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--menu);outline-offset:3px}
+.display{font-family:var(--f-display);font-weight:500;text-transform:uppercase;letter-spacing:1px;line-height:1.13}
+.wrap{padding-left:max(var(--gut),env(safe-area-inset-left,0px));padding-right:max(var(--gut),env(safe-area-inset-right,0px))}
+
+/* ---------- header ---------- */
+.hdr{color:#fff}
+/* лого и навигация — отдельные fixed-слои, чтобы difference смешивался с самой страницей */
+.logo,.hdr-nav{position:fixed;z-index:50;top:env(safe-area-inset-top,0px);height:64px;mix-blend-mode:difference;color:#fff}
+.logo{left:max(var(--gut),env(safe-area-inset-left,0px));display:flex;align-items:center;width:max(142px,9.86vw);line-height:0}.logo svg{display:block;width:100%;height:auto}
+.hdr-nav{left:calc(50% + 10px);right:max(var(--gut),env(safe-area-inset-right,0px));display:grid;grid-template-columns:repeat(3,1fr) 40px;align-items:center;gap:0 20px}
+.hdr-nav a,.hdr-nav button{width:max-content;font-size:var(--fs14)}
+.cta-pill{padding:12px 16px 11px;margin:-12px -16px -11px;transition:background .25s,color .25s}
+.hdr-nav .burger{width:40px;height:24px;margin-block:-5px;position:relative;justify-self:end}
+.burger i{margin-top:5px}
+.burger i{position:absolute;left:0;right:0;height:2px;background:currentColor;transition:transform .3s,opacity .2s}
+.burger i:nth-child(1){top:0}.burger i:nth-child(2){top:6px}.burger i:nth-child(3){top:12px}
+body.menu-open .hdr-nav{mix-blend-mode:normal}
+body.menu-open .cta-pill{background:#fff;color:var(--ink)}
+body.menu-open .burger i:nth-child(1){transform:translateY(6px)}
+body.menu-open .burger i:nth-child(3){transform:translateY(-6px)}
+
+/* ---------- menu ---------- */
+.menu{position:fixed;top:0;right:0;bottom:0;z-index:40;width:max(50.7%,360px);max-width:100%;background:var(--menu);color:#fff;
+  transform:translateX(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);
+  padding:calc(154px + env(safe-area-inset-top,0px)) max(var(--gut),env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) var(--gut);
+  display:grid;grid-template-columns:max(217px,15.07vw) minmax(0,1fr);grid-template-rows:1fr auto;gap:0 20px}
+body.menu-open .menu{transform:none}
+.menu-nav{grid-column:2;min-width:0;text-wrap:balance;display:flex;flex-direction:column;align-items:flex-end;gap:36px;font-size:var(--fs44);line-height:1.27;text-align:right}
+.menu-nav a{transition:opacity .2s,transform .6s cubic-bezier(.2,.7,.2,1);transform:translateY(24px);opacity:0}
+body.menu-open .menu-nav a{transform:none;opacity:1}
+body.menu-open .menu-nav a:nth-child(1){transition-delay:.18s}body.menu-open .menu-nav a:nth-child(2){transition-delay:.22s}
+body.menu-open .menu-nav a:nth-child(3){transition-delay:.26s}body.menu-open .menu-nav a:nth-child(4){transition-delay:.30s}
+body.menu-open .menu-nav a:nth-child(5){transition-delay:.34s}body.menu-open .menu-nav a:nth-child(6){transition-delay:.38s}
+.menu-contacts,.menu-foot{opacity:0;transition:opacity .4s}
+body.menu-open .menu-contacts,body.menu-open .menu-foot{opacity:1;transition-delay:.35s}
+body.menu-open .menu-nav:hover a{opacity:.55;transition-delay:0s}body.menu-open .menu-nav a:hover{opacity:1}
+.menu-contacts{grid-column:1;grid-row:1;padding-top:3px;display:flex;flex-direction:column;gap:20px}
+.menu-social{display:flex;flex-direction:column;gap:15px}
+.menu-foot{grid-column:1/-1;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:var(--fs12)}
+
+/* ---------- stage (хиро → услуги → клиенты) ---------- */
+.stage{position:relative;z-index:2;background:var(--paper);height:400vh}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.scene{position:absolute;left:0;top:0;width:100%;height:100%;background:var(--scene);will-change:width,height,transform}
+.scene{overflow:hidden}
+.scene video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.scene-shade{position:absolute;inset:0;background:var(--scene);opacity:.42;pointer-events:none}
+.hero-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-56%);color:#fff;font-size:var(--fs140);line-height:.86;text-align:center;white-space:nowrap}
+.hint{position:fixed;z-index:50;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);color:#fff;font-size:var(--fs14);mix-blend-mode:difference;cursor:pointer;white-space:nowrap}
+body.menu-open .hint{opacity:0;pointer-events:none}
+.panel{position:absolute;inset:0;opacity:0;pointer-events:none}
+.panel.on{pointer-events:auto}
+
+.svc-head{position:absolute;left:calc(50% + 10px);top:100px;width:min(max(572px,39.72vw),calc(50% - 30px));font-size:var(--fs48)}
+.svc-list{position:absolute;left:calc(50% + 10px);right:var(--gut);bottom:20px;display:flex;flex-direction:column;gap:12px}
+.svc{border-top:1px solid var(--rule);padding-top:12px;display:flex;gap:20px;align-items:flex-start}
+.svc-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.svc-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:var(--fs20)}
+.svc-top span{display:flex;gap:12px;align-items:baseline}
+.num{font-family:var(--f-display);font-size:var(--fs20);letter-spacing:1px}
+.svc p{margin:0;max-width:max(453px,31.46vw)}
+.arrow{width:16px;height:16px;flex:none;transition:transform .25s}
+.svc:hover .arrow,.all-cases:hover .arrow{transform:translate(2px,-2px)}
+.ph{background:var(--ph);color:var(--ph-ink);font:500 11px/1.2 var(--f-text);display:flex;align-items:flex-end;padding:8px;letter-spacing:0;max-width:100%}
+.svc-img{width:max(217px,15.07vw);height:max(140px,9.72vw);flex:none;object-fit:cover;display:block}
+@media (min-width:821px) and (hover:hover){
+  .svc-img{transition:width .55s cubic-bezier(.2,.7,.2,1),height .55s cubic-bezier(.2,.7,.2,1)}
+  .svc:hover .svc-img,.svc:focus-visible .svc-img{width:max(282px,19.58vw);height:max(182px,12.64vw)}
+}
+
+.cl-head{position:absolute;left:var(--gut);top:100px;width:min(max(690px,47.92vw),calc(50% - 30px));font-size:var(--fs48)}
+.cl-text{position:absolute;left:calc(50% + 10px);right:var(--gut);top:111px;max-width:max(690px,47.92vw);margin:0;letter-spacing:-.03em}
+.logos{position:absolute;left:0;right:0;bottom:calc(200 / 750 * 100%);overflow:hidden}
+.cl-stats{position:absolute;left:calc(50% + 10px);right:var(--gut);top:209px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cl-stats > div{border-top:1px solid var(--rule);padding-top:9px;display:flex;flex-direction:column;gap:4px}
+.cl-stats b{font-weight:500;font-size:var(--fs48);line-height:1.13}
+.cl-stats span{letter-spacing:-.03em;max-width:217px;max-width:max(217px,15.07vw)}
+.cl-more{position:absolute;left:calc(50% + 10px);top:385px}
+.logos-track{display:flex;gap:40px;width:max-content;animation:run 40s linear infinite}
+.logo-slot{width:160px;height:80px;display:block;mix-blend-mode:multiply}
+@keyframes run{to{transform:translateX(-50%)}}
+
+/* ---------- кейсы ---------- */
+.cases{position:relative;padding-top:24px}
+.collage{position:relative;aspect-ratio:1400/1189;max-width:100%}
+.case{position:absolute;display:flex;flex-direction:column;gap:20px;will-change:transform}
+.case-cover{overflow:hidden;width:100%;max-width:100%}
+.case-img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.case-meta{display:flex;flex-direction:column;gap:4px}
+.case-meta small{font-size:var(--fs12)}
+.case-meta b{font-weight:500;font-size:var(--fs20);letter-spacing:-.01em;line-height:1.2}
+.case .num{position:absolute;top:0;white-space:nowrap}
+.case .num.r{left:calc(100% + 12px)}
+.case .num.l{right:calc(100% + 8px)}
+.case:hover .case-img,.case:focus-visible .case-img{transform:scale(1.2)}
+
+.after-cases{display:grid;grid-template-columns:calc(947 / 1400 * 100%) 1fr;padding-top:calc(147 / 1440 * 100vw)}
+.more-link{display:inline-flex;align-items:center;gap:12px;font-size:var(--fs20);width:max-content;letter-spacing:-.01em}
+.more-link u{text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:2px}
+.more-link:hover .arrow{transform:translate(2px,-2px)}
+.all-cases{grid-column:2}
+.all-cases sup{font-family:var(--f-display);font-size:var(--fs20);letter-spacing:1px;margin-left:-9px;align-self:flex-start;margin-top:-12px}
+
+.cta{display:flex;justify-content:center;align-items:center;gap:0;padding-block:calc(92 / 1440 * 100vw) 140px}
+.cta-btn{display:flex;align-items:center;gap:22px}
+.paren{font-family:var(--f-display);font-size:var(--fs88);line-height:1;display:flex;gap:20px;transition:gap .35s cubic-bezier(.2,.7,.2,1)}
+.cta-btn:hover .paren{gap:34px}
+.cta-txt{display:flex;flex-direction:column;align-items:center}
+.cta-txt span{font-size:var(--fs38);line-height:1.26;letter-spacing:-.03em}
+.cta-txt .display{font-size:var(--fs48);margin-top:-4px}
+
+/* ---------- награды ---------- */
+/* бежевый слой: наезжает на зафиксированный экран клиентов */
+.beige{position:relative;z-index:3;background:var(--beige);margin-top:-100vh;margin-top:-100svh;box-shadow:0 -1px 0 rgba(16,16,16,.06)}
+.awards{position:relative;padding-block:100px 40px}
+.awards h2{margin:0 0 36px calc(709 / 1399 * 100%);font-size:var(--fs48);font-weight:500}
+.aw-table{position:relative;margin-left:1px}
+.aw-row{display:grid;grid-template-columns:calc(216 / 1399 * 100%) calc(493 / 1399 * 100%) 1fr;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);letter-spacing:-.03em;position:relative;cursor:default}
+.aw-row:first-of-type{border-top:1px solid var(--rule)}
+.aw-row{transition:background-color .25s}
+.aw-row:hover{background:var(--paper)}
+.aw-row > span:nth-child(2){padding-left:20px}
+
+.aw-pop{position:absolute;left:0;top:0;width:max(220px,15.28vw);aspect-ratio:220/160;object-fit:cover;pointer-events:none;z-index:3;opacity:0;transform:translate(-50%,-50%) scale(.85);transition:opacity .25s,transform .35s cubic-bezier(.2,.7,.2,1);will-change:left,top}
+.aw-table.on .aw-pop{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.aw-more{margin-top:49px;margin-left:calc(709 / 1399 * 100%)}
+
+/* ---------- 25 лет ---------- */
+.history{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;padding-block:100px 40px;min-height:750px;border-top:1px solid #e6e6e3}
+.history h2{margin:0;font-size:var(--fs48);font-weight:500;padding-left:4px}
+.history-r{display:flex;flex-direction:column;margin-left:-10px}
+.history-r > p{margin:0;letter-spacing:-.03em;max-width:max(453px,31.46vw)}
+.mile{margin-top:231px;display:flex;flex-direction:column;gap:8px;max-width:max(310px,21.53vw);padding-left:3px}
+.mile .num{margin-bottom:10px}
+.mile b{font-weight:500;font-size:var(--fs20)}
+.mile p{margin:0}
+.illu{display:block;height:auto;margin-top:36px;width:446px;aspect-ratio:446/245;max-width:100%}
+
+/* ---------- mobile ---------- */
+@media (max-width:820px){
+  .hdr-nav{left:auto;grid-template-columns:auto 40px;justify-content:end;gap:20px}
+  .hdr-nav .tel,.hdr-nav .pres{display:none}
+  .stage{height:auto}
+  .sticky{position:static;height:auto;overflow:visible}
+  .scene{position:relative;height:78svh;min-height:420px;width:100%!important;transform:none!important}
+  .hero-title{font-size:58px;line-height:52px}
+  .panel{position:relative;opacity:1!important;pointer-events:auto;transform:none!important}
+  .svc-head,.svc-list,.cl-head,.cl-text,.logos{position:static;width:auto}
+  .cl-text{top:auto}
+  .panel-a,.panel-b{padding:48px max(var(--gut),env(safe-area-inset-right,0px)) 48px max(var(--gut),env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:32px}
+  .svc-head,.cl-head{font-size:32px}
+  .svc{flex-direction:column}
+  .svc-img{width:100%;height:auto;aspect-ratio:217/140}
+  .logos{margin-inline:calc(-1 * var(--gut))}
+  .collage{aspect-ratio:auto;display:flex;flex-direction:column;gap:48px}
+  .case{position:relative;left:auto!important;top:auto!important;width:100%!important;transform:none!important}
+  .case .num{position:static;order:-1}
+  .after-cases{grid-template-columns:1fr;padding-top:56px}.all-cases{grid-column:1}
+  .cl-stats,.cl-more{position:static}
+  .cl-stats{grid-template-columns:1fr 1fr 1fr;gap:12px}.cl-stats b{font-size:28px}
+  .beige{margin-top:0}
+  .awards{padding-block:64px 24px}.awards h2{font-size:36px;margin:0 0 24px}
+  .aw-row{grid-template-columns:64px 1fr;row-gap:4px}
+  .aw-row > span:nth-child(2){padding-left:0}
+  .aw-row > span:nth-child(3){grid-column:2;padding-left:0;opacity:.7}
+  .aw-pop{display:none}
+  .aw-more{margin-left:0;margin-top:32px}
+  .cta{padding-block:96px}
+  .paren{font-size:56px;gap:8px}
+  .cta-txt span{font-size:24px;line-height:30px}.cta-txt .display{font-size:30px}
+  .history{grid-template-columns:1fr;gap:24px;padding-block:64px;min-height:0}
+  .history h2{font-size:36px;padding-left:0}
+  .history-r{margin-left:0}
+  .mile{margin-top:56px}
+  .menu{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;padding-top:calc(110px + env(safe-area-inset-top,0px));gap:40px}
+  .menu-nav{grid-column:1;grid-row:1;align-items:flex-start;text-align:left;font-size:30px;gap:14px}
+  .menu-contacts{grid-row:2}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .logos-track{animation:none}
+  .menu,.paren,.burger i,.svc-img,.case-img{transition:none!important}
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <a class="logo" href="#top" aria-label="Ascreen, на главную"><svg viewBox="0 0 142 20" width="142" height="20" fill="currentColor" role="img" aria-label="ascreen"><path d="M37.8364 18.1398C41.0792 18.1398 42.4689 16.1224 42.4689 16.1224H42.6233L42.9322 17.8295H45.5573V7.89725C45.5573 4.32786 43.241 2 39.2261 2C35.3657 2 33.0494 4.17267 32.895 6.81092H35.9833C36.1378 5.87977 37.0643 4.63825 39.2261 4.63825C41.2336 4.63825 42.4689 5.87977 42.4689 7.89725V8.20763H38.6085C34.2847 8.20763 32.2773 10.2251 32.2773 13.3289C32.2773 16.1224 34.4392 18.1398 37.8364 18.1398ZM38.1452 15.5016C36.2922 15.5016 35.3657 14.5705 35.3657 13.1737C35.3657 11.777 36.4466 10.6907 38.7629 10.6907H42.4689V11.3115C42.4689 13.9497 40.9247 15.5016 38.1452 15.5016Z"/><path d="M54.9798 18.1398C59.3036 18.1398 61.311 15.9672 61.311 13.4841C61.311 10.8459 59.7668 9.32501 56.8329 8.8284L54.0533 8.36283C52.6636 8.08348 51.7371 7.43168 51.7371 6.50054C51.7371 5.56939 52.6636 4.63825 54.8254 4.63825C57.1417 4.63825 58.0682 5.87977 58.0682 6.81092H61.1566C61.1566 5.10382 59.3036 2 54.8254 2C50.6561 2 48.6487 4.01748 48.6487 6.50054C48.6487 9.13878 50.1929 10.5045 53.1268 11.0011L55.9064 11.4666C57.605 11.746 58.2226 12.3978 58.2226 13.4841C58.2226 14.4153 57.2961 15.5016 54.9798 15.5016C52.5091 15.5016 51.4282 14.1049 51.4282 13.1737H48.3398C48.3398 14.8808 50.0384 18.1398 54.9798 18.1398Z"/><path d="M71.3577 18.1398C75.9902 18.1398 77.9977 14.7256 78.4609 12.3978H75.3726C75.0637 13.6393 73.8284 15.3464 71.3577 15.3464C68.7326 15.3464 66.7251 13.3289 66.7251 10.0699C66.7251 6.81092 68.7326 4.79344 71.3577 4.79344C73.674 4.79344 74.9093 6.19015 75.3726 7.58687H78.4609C77.9977 5.4142 75.9902 2 71.3577 2C66.8795 2 63.6367 5.25901 63.6367 10.0699C63.6367 14.8808 66.8795 18.1398 71.3577 18.1398Z"/><path d="M81.543 17.8297H84.6313V8.33196C84.6313 6.19032 85.7122 5.10399 87.8741 5.10399H90.3448V2.31055H87.5653C85.7122 2.31055 85.0946 3.08651 84.6313 3.70727H84.4769L84.1681 2.31055H81.543V17.8297Z"/><path d="M99.014 18.1398C103.028 18.1398 105.19 15.3464 105.962 13.3289H102.72C102.256 14.4153 100.867 15.5016 99.014 15.5016C96.5433 15.5016 94.6903 13.7945 94.3814 11.1563H106.271C106.271 11.1563 106.426 10.5355 106.426 9.60435C106.426 5.25901 103.183 2 99.014 2C94.5358 2 91.293 5.25901 91.293 10.0699C91.293 14.8808 94.5358 18.1398 99.014 18.1398ZM94.3814 8.8284C94.8447 6.34534 96.3889 4.63825 99.014 4.63825C101.484 4.63825 103.183 6.34534 103.492 8.8284H94.3814Z"/><path d="M116.627 18.1398C120.642 18.1398 122.804 15.3464 123.576 13.3289H120.333C119.87 14.4153 118.48 15.5016 116.627 15.5016C114.156 15.5016 112.303 13.7945 111.994 11.1563H123.885C123.885 11.1563 124.039 10.5355 124.039 9.60435C124.039 5.25901 120.796 2 116.627 2C112.149 2 108.906 5.25901 108.906 10.0699C108.906 14.8808 112.149 18.1398 116.627 18.1398ZM111.994 8.8284C112.458 6.34534 114.002 4.63825 116.627 4.63825C119.098 4.63825 120.796 6.34534 121.105 8.8284H111.994Z"/><path d="M127.293 17.8295H130.382V8.51801C130.382 6.50053 132.08 4.79344 134.397 4.79344C136.559 4.79344 138.103 6.50053 138.103 8.51801V17.8295H141.191V8.51801C141.191 4.48305 138.72 2 135.014 2C132.08 2 130.536 3.86229 130.536 3.86229H130.382L130.073 2.31038H127.293V17.8295Z"/><path d="M8.47656 0L18.3042 20L25.0007 18.1034L16.0352 0H8.47656Z"/><path d="M0 15.8545L8.41746 20L13.1349 11.979H3.94464L0 15.8545Z"/></svg></a>
+  <nav class="hdr-nav" aria-label="Быстрые ссылки">
+    <a class="tel" href="tel:+78124570862">+7 (812) 457-08-62</a>
+    <a class="pres" href="#">презентация</a>
+    <a class="cta-pill" href="#contact">обсудить проект</a>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+  </nav>
+</header>
+
+<button class="hint" id="hint" type="button">скролл вниз</button>
+
+<aside class="menu" id="menu" aria-hidden="true" data-lenis-prevent>
+  <nav class="menu-nav display" aria-label="Разделы">
+    <a href="#services">A/V-интеграция</a>
+    <a href="#services">создание экспозиций</a>
+    <a href="#cases">кейсы</a>
+    <a href="#about">о компании</a>
+    <a href="#">новости</a>
+    <a href="#contact">связаться</a>
+  </nav>
+  <div class="menu-contacts">
+    <div>Санкт-Петербург,<br>Торфяная дорога, 7Ф, офис 1114</div>
+    <div>info@ascreen.ru</div>
+    <div class="menu-social"><a href="#">RuTube</a><a href="#">Telegram</a><a href="#">Vkontakte</a></div>
+  </div>
+  <div class="menu-foot"><a href="#">Политика конфиденциальности</a><span>ООО «Аскрин» ©2026. Все права защищены</span></div>
+</aside>
+
+<main id="top">
+  <section class="stage" id="stage">
+    <div class="sticky" id="sticky">
+      <div class="scene" id="scene">
+        <video id="heroVideo" src="media/hero.mp4" poster="media/poster.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+        <div class="scene-shade" id="shade"></div>
+      </div>
+
+      <h1 class="hero-title display" id="heroTitle">Строим сцену<br>истории</h1>
+
+      <div class="panel panel-a" id="services">
+        <h2 class="svc-head display" style="margin:0">Придумываем пространства<br>и сами их собираем</h2>
+        <div class="svc-list">
+          <a class="svc" href="#">
+            <div class="svc-body">
+              <div class="svc-top"><span><span class="num">(01)</span>A/V-интеграция</span>
+                <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <p>Стенды, павильоны и временные экспозиции, к которым подходят сами. Начинаем с того, что посетитель должен понять и запомнить.</p>
+            </div>
+            <img class="svc-img" src="img/service-av.jpg" alt="" width="217" height="140">
+          </a>
+          <a class="svc" href="#">
+            <div class="svc-body">
+              <div class="svc-top"><span><span class="num">(02)</span>Создание экспозиций</span>
+                <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+              <p>Стенды, павильоны и временные экспозиции, к которым подходят сами. Начинаем с того, что посетитель должен понять и запомнить.</p>
+            </div>
+            <img class="svc-img" src="img/service-expo.jpg" alt="" width="217" height="140">
+          </a>
+        </div>
+      </div>
+
+      <div class="panel panel-b" id="about">
+        <h2 class="cl-head display" style="margin:0">Создаём пространства,<br>в которых людям есть что увидеть, понять и запомнить, и где всё работает так, как задумано</h2>
+        <div class="cl-stats">
+          <div><b class="display">25+</b><span>лет практического опыта на рынке</span></div>
+          <div><b class="display">1500+</b><span>проектов реализовали в России и за рубежом</span></div>
+          <div><b class="display">150</b><span>специалистов с инженерным и творческим опытом</span></div>
+        </div>
+        <p class="cl-text">С 2001 года мы прошли путь от системного интегратора до компании, которая создаёт пространства целиком. За это время — больше 1500 проектов по всей России: от переговорной на десять человек до корпоративного музея на тысячу квадратных метров.</p>
+        <div class="logos" aria-label="Клиенты">
+          <div class="logos-track" id="logos"></div>
+        </div>
+        <a class="more-link cl-more" href="#"><u>о компании</u><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="beige">
+  <section class="awards wrap" id="awards" aria-labelledby="hAw">
+    <h2 id="hAw" class="display">награды</h2>
+    <div class="aw-table" id="awTable" role="table" aria-label="Награды">
+      <img class="aw-pop" id="awPop" alt="" aria-hidden="true">
+    </div>
+    <a class="more-link aw-more" href="#"><u>больше наград</u><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+  </section>
+
+  <section class="cases wrap" id="cases" aria-label="Кейсы">
+    <div class="collage" id="collage"></div>
+    <div class="after-cases">
+      <a class="more-link all-cases" href="#"><u>Все кейсы</u><sup>(1453)</sup><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+    </div>
+    <div class="cta" id="contact">
+      <button class="cta-btn" id="ctaBtn">
+        <span class="paren" aria-hidden="true"><span>(</span><span>(</span></span>
+        <span class="cta-txt"><span>Обсудим ваш проект</span><span class="display">начнем с концепции</span></span>
+        <span class="paren" aria-hidden="true"><span>)</span><span>)</span></span>
+      </button>
+    </div>
+  </section>
+  </div>
+
+  <section class="history wrap" aria-labelledby="h25">
+    <h2 id="h25" class="display">25 лет Аскрин</h2>
+    <div class="history-r">
+      <p>От первых AV-систем — к пространствам,<br>которые рассказывают истории.</p>
+      <div class="mile">
+        <span class="num">2001</span>
+        <b>Начало Аскрина</b>
+        <p>Начинаем с аудиовизуальных систем и инженерных решений.</p>
+      </div>
+      <img class="illu" src="img/history-2001.png" alt="Первый офис Аскрина: проектор, экран и серверная стойка, линейный рисунок" width="446" height="245">
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  /* ---------- меню ---------- */
+  const body = document.body, burger = document.getElementById('burger'), menu = document.getElementById('menu');
+  const setMenu = open => {
+    body.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', open);
+    menu.setAttribute('aria-hidden', !open);
+    if (lenis) open ? lenis.stop() : lenis.start();
+  };
+  burger.addEventListener('click', () => setMenu(!body.classList.contains('menu-open')));
+  menu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  document.querySelector('main').addEventListener('click', e => {
+    if (body.classList.contains('menu-open')) { e.preventDefault(); setMenu(false); }
+  }, true);
+  document.getElementById('ctaBtn').addEventListener('click', () => setMenu(true));
+
+  /* ---------- логотипы клиентов ---------- */
+  const clients = [['Ростех','img/logo-rostec.png'],['Росатом','img/logo-rosatom.png'],['Газпром','img/logo-gazprom.png'],['Гознак','img/logo-goznak.png']];
+  const track = document.getElementById('logos');
+  track.innerHTML = [...clients, ...clients, ...clients, ...clients].map(([n,src]) => `<img class="logo-slot" src="${src}" alt="${n}" width="160" height="80">`).join('');
+
+  const IMG={'01':'img/case-01.jpg','02':'img/case-02.jpg','03':'img/case-03.jpg','04':'img/case-04.jpg','05':'img/case-05.jpg','06':'img/case-06.jpg'};
+  /* ---------- кейсы: координаты из раскадровки (сетка 1440, коллаж 1300) ---------- */
+  const cases = [
+    {n:'01', x:20,  y:0,   w:335, h:213, s:-.06, side:'r', place:'ИВЦ «Электроприбор», Тамбов', title:'Точность, за которой<br>стоят люди'},
+    {n:'02', x:493, y:143, w:261, h:261, s:.04,  side:'l', place:'Выставка «Я пуна хаёда», ЯНАО', title:'Земля после нас остаётся'},
+    {n:'03', x:967, y:267, w:453, h:310, s:-.02, side:'l', place:'ИВЦ «Электроприбор», Тамбов', title:'Точность, за которой стоят люди'},
+    {n:'04', x:20,  y:628, w:261, h:261, s:.05,  side:'r', place:'Выставка «Я пуна хаёда», ЯНАО', title:'Земля после нас остаётся'},
+    {n:'05', x:375, y:734, w:453, h:310, s:-.03, side:'l', place:'ИВЦ «Электроприбор», Тамбов', title:'Точность, за которой стоят люди'},
+    {n:'06', x:967, y:889, w:335, h:213, s:.04,  side:'l', place:'ИВЦ «Электроприбор», Тамбов', title:'Точность, за которой<br>стоят люди'},
+  ];
+  const W = 1400, H = 1189; /* ширина коллажа = 1440 − 2×20; высота — до низа кейса (06) */
+  const collage = document.getElementById('collage');
+  collage.innerHTML = cases.map(c => `
+    <a class="case" href="#" data-s="${c.s}" style="left:${(c.x-20)/W*100}%;top:${c.y/H*100}%;width:${c.w/W*100}%">
+      <span class="num ${c.side}">(${c.n})</span>
+      <div class="case-cover" style="aspect-ratio:${c.w}/${c.h}"><img class="case-img" src="${IMG[c.n]}" alt="" loading="lazy"></div>
+      <div class="case-meta"><small>${c.place}</small><b>${c.title}</b></div>
+    </a>`).join('');
+  const caseEls = [...collage.querySelectorAll('.case')];
+
+  /* ---------- награды: фото проекта следует за курсором ---------- */
+  const awards = [
+    ['2026','ProIntegration Tech 2026','Лучший интеграционный проект в сфере выставочных пространств — ИВЦ ПАО «Электроприбор»','img/award-01.png'],
+    ['2026','ТОП-5 производителей в строительной сфере','Мультимедиа, медиафасады, цифровая навигация',IMG['05']],
+    ['2025','AV Focus on the future','Лучшее мультифункциональное решение — Офис RBI на Левашовском хлебозаводе',IMG['01']],
+    ['2025','Конкурс брендов креативных индустрий','Призер в номинации «Дизайн»',IMG['04']],
+    ['2025','VII Национальная премия «Корпоративный музей»','Развитие кадрового потенциала — ИВЦ ПАО «Электроприбор»',IMG['03']],
+    ['2025','VII Национальная премия «Корпоративный музей»','Музей для всех — Музей волейбольного клуба «Факел-Ямал»',IMG['02']],
+    ['2025','VII Национальная премия «Корпоративный музей»','Открытие года — Музей волейбольного клуба «Факел-Ямал»',IMG['06']],
+    ['2022','IV Всероссийский конкурс «Корпоративный музей»','Гран-при в номинации «Лучший корпоративный музей»',IMG['03']],
+  ];
+  const awT = document.getElementById('awTable'), pop = document.getElementById('awPop');
+  awT.insertAdjacentHTML('beforeend', awards.map(([y,c,r],i) =>
+    `<div class="aw-row" role="row" data-i="${i}"><span role="cell">${y}</span><span role="cell">${c}</span><span role="cell">${r}</span></div>`).join(''));
+  awards.forEach(a => { const im = new Image(); im.src = a[3]; });
+  let px = 0, py = 0, tx = 0, ty2 = 0, popRaf = 0, cur = -1;
+  const popLoop = () => {
+    px += (tx - px) * .18; py += (ty2 - py) * .18;
+    pop.style.left = px + 'px'; pop.style.top = py + 'px';
+    popRaf = Math.abs(tx - px) + Math.abs(ty2 - py) > .5 ? requestAnimationFrame(popLoop) : 0;
+  };
+  awT.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const r = awT.getBoundingClientRect();
+    tx = e.clientX - r.left; ty2 = e.clientY - r.top;
+    const row = e.target.closest('.aw-row');
+    if (row) {
+      const i = +row.dataset.i;
+      if (i !== cur) { cur = i; pop.src = awards[i][3]; }
+      if (!awT.classList.contains('on')) { px = tx; py = ty2; awT.classList.add('on'); }
+    }
+    if (!popRaf) popRaf = requestAnimationFrame(popLoop);
+  });
+  awT.addEventListener('pointerleave', () => { awT.classList.remove('on'); cur = -1; });
+
+  /* ---------- сцена ---------- */
+  const stage = document.getElementById('stage'), sticky = document.getElementById('sticky'), scene = document.getElementById('scene');
+  const shade = document.getElementById('shade'), title = document.getElementById('heroTitle'), hint = document.getElementById('hint');
+  const pa = document.getElementById('services'), pb = document.getElementById('about');
+  const desk = matchMedia('(min-width: 821px)');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  /* инерционный скролл */
+  let lenis = null;
+  if (window.Lenis && !reduce.matches) {
+    lenis = new Lenis({lerp: .085, wheelMultiplier: 1, smoothWheel: true});
+    const loop = t => { lenis.raf(t); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  }
+  const scrollToY = y => lenis ? lenis.scrollTo(y, {duration: 1.4}) : window.scrollTo({top: y, behavior: reduce.matches ? 'auto' : 'smooth'});
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  function fade(el, o, dy) {
+    el.style.opacity = o;
+    el.style.transform = `translateY(${(1 - o) * dy}px)`;
+    el.classList.toggle('on', o > .5);
+  }
+
+  function frame() {
+    if (!desk.matches) {
+      [scene, title, pa, pb, shade].forEach(el => el.removeAttribute('style'));
+      caseEls.forEach(el => el.style.transform = '');
+      return;
+    }
+    const vw = sticky.clientWidth, vh = sticky.clientHeight;
+    const p = prog;
+
+    const t1 = ease(clamp((p - .04) / .28));   // экран → левая половина
+    const t2 = ease(clamp((p - .52) / .26));   // половина → плашка 237×140
+    const halfW = vw * 710 / 1440, smallW = Math.max(120, vw * 237 / 1440), smallH = 140;
+    const w = lerp(lerp(vw, halfW, t1), smallW, t2);
+    const h = lerp(vh, smallH, t2);
+    scene.style.width = w + 'px';
+    scene.style.height = h + 'px';
+    scene.style.transform = `translateY(${lerp(0, vh - smallH, t2)}px)`;
+
+    const tf = 1 - clamp(p / .1);
+    title.style.opacity = tf;
+    shade.style.opacity = .42 * tf;
+    fade(pa, clamp((p - .2) / .1) * (1 - clamp((p - .46) / .08)), 24);
+    fade(pb, clamp((p - .64) / .12), 24);
+
+    /* лёгкий параллакс коллажа */
+    if (!reduce.matches) {
+      const ct = collage.getBoundingClientRect().top;
+      caseEls.forEach(el => {
+        const d = (ct + el.offsetTop + el.offsetHeight / 2) - innerHeight / 2;
+        el.style.transform = `translateY(${d * el.dataset.s}px)`;
+      });
+    }
+  }
+  /* ---------- сцены первого экрана: переходы по времени ---------- */
+  const STEPS = [0, .40, 1];        // хиро → услуги → клиенты
+  const DUR = 1300;
+  let prog = 0, step = 0, anim = null;
+  function goTo(i) {
+    i = Math.max(0, Math.min(STEPS.length - 1, i));
+    if (i === step && !anim) return;
+    step = i;
+    const from = prog, to = STEPS[i], t0 = performance.now(), d = reduce.matches ? 0 : DUR;
+    cancelAnimationFrame(anim);
+    const tick = now => {
+      const t = d ? Math.min(1, (now - t0) / d) : 1;
+      prog = from + (to - from) * t;   // ease уже внутри frame()
+      frame();
+      anim = t < 1 ? requestAnimationFrame(tick) : null;
+      /* доехали до самого верха, а сцена ещё не первая — дальше скроллить некуда, доигрываем обратный шаг сами */
+      if (!anim && typeof sync === 'function' && -stage.getBoundingClientRect().top < 6 && step > 0) setTimeout(sync, 120);
+    };
+    anim = requestAnimationFrame(tick);
+  }
+  /* скролл обычный; пересёк порог — сцена доигрывает переход сама */
+  const scrollP = () => {
+    const vh = sticky.clientHeight;
+    return clamp(-stage.getBoundingClientRect().top / (stage.offsetHeight - vh));
+  };
+  /* сцены меняются по одной: каждый следующий шаг — только после того, как предыдущий доиграл и пользователь снова скроллит */
+  const stepFor = p => -stage.getBoundingClientRect().top < 6 ? 0 : p < .45 ? 1 : 2;
+  const sync = () => {
+    if (!desk.matches || anim) return;
+    const want = stepFor(scrollP());
+    if (want !== step) goTo(step + Math.sign(want - step));
+  };
+  addEventListener('scroll', sync, {passive: true});
+  addEventListener('wheel', sync, {passive: true});
+  addEventListener('touchmove', sync, {passive: true});
+  /* если страница открылась уже прокрученной — ставим сцену без анимации */
+  if (desk.matches && scrollY > 6) { step = stepFor(scrollP()); prog = STEPS[step]; frame(); }
+  const toStep = i => {
+    const vh = sticky.clientHeight, span = stage.offsetHeight - vh;
+    const top = stage.getBoundingClientRect().top + scrollY;
+    scrollToY(top + span * [0, .3, .85][i]);
+  };
+  hint.addEventListener('click', () => {
+    if (desk.matches && step < STEPS.length - 1 && -stage.getBoundingClientRect().top < stage.offsetHeight - sticky.clientHeight) toStep(step + 1);
+    else scrollToY(scrollY + innerHeight * .85);
+  });
+  document.querySelectorAll('a[href="#services"], a[href="#about"], a[href="#top"]').forEach(a => a.addEventListener('click', e => {
+    if (!desk.matches) return;
+    e.preventDefault(); setMenu(false);
+    toStep({'#services': 1, '#about': 2, '#top': 0}[a.getAttribute('href')]);
+  }));
+
+  document.querySelectorAll('a[href="#cases"], a[href="#contact"]').forEach(a => a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    e.preventDefault(); setMenu(false);
+    lenis ? lenis.scrollTo(t, {duration: 1.4}) : t.scrollIntoView({behavior: reduce.matches ? 'auto' : 'smooth'});
+  }));
+
+  let raf = 0;
+  const req = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; frame(); }); };
+  addEventListener('scroll', req, {passive: true});
+  addEventListener('resize', req);
+  desk.addEventListener('change', req);
+  frame();
+  const v = document.getElementById('heroVideo');
+  if (reduce.matches) { v.removeAttribute('autoplay'); v.pause(); }
+  else v.play().catch(() => {});
+})();
+</script>
+
+</body>
+</html>
