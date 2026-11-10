@@ -127,7 +127,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 @keyframes run{to{transform:translateX(-50%)}}
 
 /* ---------- кейсы ---------- */
-.cases{position:relative;padding-top:24px}
+.cases{position:relative;padding-top:100px}
 .collage{position:relative;aspect-ratio:1400/1189;max-width:100%}
 .case{position:absolute;display:flex;flex-direction:column;gap:20px;will-change:transform}
 .case-cover{overflow:hidden;width:100%;max-width:100%}
@@ -158,7 +158,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 /* ---------- награды ---------- */
 /* бежевый слой: наезжает на зафиксированный экран клиентов */
 .beige{position:relative;z-index:3;background:var(--beige);margin-top:-35vh;margin-top:-35svh;will-change:transform;box-shadow:0 -1px 0 rgba(16,16,16,.06)}
-.awards{position:relative;padding-block:100px 40px}
+.awards{position:relative;padding-block:calc(147 / 1440 * 100vw) 0}
 .awards h2{margin:0 0 36px calc(709 / 1399 * 100%);font-size:var(--fs48);font-weight:500}
 .aw-table{position:relative;margin-left:1px}
 .aw-row{display:grid;grid-template-columns:calc(216 / 1399 * 100%) calc(493 / 1399 * 100%) 1fr;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);letter-spacing:-.03em;position:relative;cursor:default}
@@ -204,7 +204,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
   .after-cases{grid-template-columns:1fr;padding-top:56px}.all-cases{grid-column:1}
   .cl-list{position:static}.cl-spacer{height:0!important}.cl-stat{padding-bottom:20px}.cl-stat b{font-size:56px}
   .beige{margin-top:0;transform:none!important}
-  .awards{padding-block:64px 24px}.awards h2{font-size:36px;margin:0 0 24px}
+  .cases{padding-top:64px}.awards{padding-block:96px 0}.awards h2{font-size:36px;margin:0 0 24px}
   .aw-row{grid-template-columns:64px 1fr;row-gap:4px}
   .aw-row > span:nth-child(2){padding-left:0}
   .aw-row > span:nth-child(3){grid-column:2;padding-left:0;opacity:.7}
@@ -309,6 +309,13 @@ body.menu-open .hint{opacity:0;pointer-events:none}
   <div class="cl-spacer" id="clSpacer" aria-hidden="true"></div>
 
   <div class="beige">
+  <section class="cases wrap" id="cases" aria-label="Кейсы">
+    <div class="collage" id="collage"></div>
+    <div class="after-cases">
+      <a class="more-link all-cases" href="#"><u>Все кейсы</u><sup>(1453)</sup><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+    </div>
+  </section>
+
   <section class="awards wrap" id="awards" aria-labelledby="hAw">
     <h2 id="hAw" class="display">награды</h2>
     <div class="aw-table" id="awTable" role="table" aria-label="Награды">
@@ -317,11 +324,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
     <a class="more-link aw-more" href="#"><u>больше наград</u><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
   </section>
 
-  <section class="cases wrap" id="cases" aria-label="Кейсы">
-    <div class="collage" id="collage"></div>
-    <div class="after-cases">
-      <a class="more-link all-cases" href="#"><u>Все кейсы</u><sup>(1453)</sup><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
-    </div>
+  <section class="cta-wrap wrap" aria-label="Связаться">
     <div class="cta" id="contact">
       <button class="cta-btn" id="ctaBtn">
         <span class="paren" aria-hidden="true"><span>(</span><span>(</span></span>
