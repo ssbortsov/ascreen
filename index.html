@@ -30,6 +30,7 @@
   --fs38:clamp(33px,2.639vw,55px);
   --fs44:clamp(27px,3.056vw,64px);
   --fs48:clamp(30px,3.333vw,70px);
+  --fs80:clamp(50px,5.556vw,116px);
   --fs88:clamp(55px,6.111vw,128px);
   --fs140:clamp(87px,9.722vw,203px);
 
@@ -82,8 +83,8 @@ body.menu-open .menu-nav:hover a{opacity:.55;transition-delay:0s}body.menu-open 
 .menu-foot{grid-column:1/-1;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:var(--fs12)}
 
 /* ---------- stage (хиро → услуги → клиенты) ---------- */
-.stage{position:relative;z-index:2;background:var(--paper);height:400vh}
-.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.stage{position:relative;z-index:2;background:var(--paper);height:170vh}
+.sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:visible}
 .scene{position:absolute;left:0;top:0;width:100%;height:100%;background:var(--scene);will-change:width,height,transform}
 .scene{overflow:hidden}
 .scene video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -113,12 +114,14 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 
 .cl-head{position:absolute;left:var(--gut);top:100px;width:min(max(690px,47.92vw),calc(50% - 30px));font-size:var(--fs48)}
 .cl-text{position:absolute;left:calc(50% + 10px);right:var(--gut);top:111px;max-width:max(690px,47.92vw);margin:0;letter-spacing:-.03em}
-.logos{position:absolute;left:0;right:0;bottom:calc(200 / 750 * 100%);overflow:hidden}
-.cl-stats{position:absolute;left:calc(50% + 10px);right:var(--gut);top:209px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.cl-stats > div{border-top:1px solid var(--rule);padding-top:9px;display:flex;flex-direction:column;gap:4px}
-.cl-stats b{font-weight:500;font-size:var(--fs48);line-height:1.13}
-.cl-stats span{letter-spacing:-.03em;max-width:217px;max-width:max(217px,15.07vw)}
-.cl-more{position:absolute;left:calc(50% + 10px);top:385px}
+.logos{position:absolute;left:0;right:0;top:384px;overflow:hidden}
+/* цифры висят под экраном: первая видна у нижнего края вровень с плашкой видео, остальные выезжают со скроллом */
+.cl-spacer{height:0}
+.cl-list{position:absolute;top:calc(100% - 140px);left:calc(50% + 10px);right:var(--gut);display:flex;flex-direction:column;align-items:flex-start}
+.cl-stat{align-self:stretch;border-top:1px solid var(--rule);padding-top:9px;padding-bottom:calc(34 / 1440 * 100vw);display:flex;flex-direction:column}
+.cl-stat b{font-weight:500;font-size:var(--fs80);line-height:1.13;margin-bottom:-4px}
+.cl-stat span{font-size:var(--fs20);letter-spacing:-.03em}
+.cl-more{margin-top:40px}
 .logos-track{display:flex;gap:40px;width:max-content;animation:run 40s linear infinite}
 .logo-slot{width:160px;height:80px;display:block;mix-blend-mode:multiply}
 @keyframes run{to{transform:translateX(-50%)}}
@@ -154,7 +157,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 
 /* ---------- награды ---------- */
 /* бежевый слой: наезжает на зафиксированный экран клиентов */
-.beige{position:relative;z-index:3;background:var(--beige);margin-top:-100vh;margin-top:-100svh;box-shadow:0 -1px 0 rgba(16,16,16,.06)}
+.beige{position:relative;z-index:3;background:var(--beige);margin-top:-35vh;margin-top:-35svh;will-change:transform;box-shadow:0 -1px 0 rgba(16,16,16,.06)}
 .awards{position:relative;padding-block:100px 40px}
 .awards h2{margin:0 0 36px calc(709 / 1399 * 100%);font-size:var(--fs48);font-weight:500}
 .aw-table{position:relative;margin-left:1px}
@@ -199,9 +202,8 @@ body.menu-open .hint{opacity:0;pointer-events:none}
   .case{position:relative;left:auto!important;top:auto!important;width:100%!important;transform:none!important}
   .case .num{position:static;order:-1}
   .after-cases{grid-template-columns:1fr;padding-top:56px}.all-cases{grid-column:1}
-  .cl-stats,.cl-more{position:static}
-  .cl-stats{grid-template-columns:1fr 1fr 1fr;gap:12px}.cl-stats b{font-size:28px}
-  .beige{margin-top:0}
+  .cl-list{position:static}.cl-spacer{height:0!important}.cl-stat{padding-bottom:20px}.cl-stat b{font-size:56px}
+  .beige{margin-top:0;transform:none!important}
   .awards{padding-block:64px 24px}.awards h2{font-size:36px;margin:0 0 24px}
   .aw-row{grid-template-columns:64px 1fr;row-gap:4px}
   .aw-row > span:nth-child(2){padding-left:0}
@@ -290,19 +292,21 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 
       <div class="panel panel-b" id="about">
         <h2 class="cl-head display" style="margin:0">Создаём пространства,<br>в которых людям есть что увидеть, понять и запомнить, и где всё работает так, как задумано</h2>
-        <div class="cl-stats">
-          <div><b class="display">25+</b><span>лет практического опыта на рынке</span></div>
-          <div><b class="display">1500+</b><span>проектов реализовали в России и за рубежом</span></div>
-          <div><b class="display">150</b><span>специалистов с инженерным и творческим опытом</span></div>
-        </div>
         <p class="cl-text">С 2001 года мы прошли путь от системного интегратора до компании, которая создаёт пространства целиком. За это время — больше 1500 проектов по всей России: от переговорной на десять человек до корпоративного музея на тысячу квадратных метров.</p>
         <div class="logos" aria-label="Клиенты">
           <div class="logos-track" id="logos"></div>
         </div>
-        <a class="more-link cl-more" href="#"><u>о компании</u><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        <div class="cl-list" id="clStats" aria-label="Аскрин в цифрах">
+          <div class="cl-stat"><b class="display">25+</b><span>лет практического опыта на рынке</span></div>
+          <div class="cl-stat"><b class="display">150</b><span>специалистов с инженерным и творческим опытом</span></div>
+          <div class="cl-stat"><b class="display">1500+</b><span>проектов реализовали в России и за рубежом</span></div>
+          <a class="more-link cl-more" href="#"><u>о компании</u><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.5"/></svg></a>
+        </div>
       </div>
     </div>
   </section>
+
+  <div class="cl-spacer" id="clSpacer" aria-hidden="true"></div>
 
   <div class="beige">
   <section class="awards wrap" id="awards" aria-labelledby="hAw">
@@ -423,6 +427,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 
   /* ---------- сцена ---------- */
   const stage = document.getElementById('stage'), sticky = document.getElementById('sticky'), scene = document.getElementById('scene');
+  const clStats = document.getElementById('clStats'), clSpacer = document.getElementById('clSpacer'), beige = document.querySelector('.beige');
   const shade = document.getElementById('shade'), title = document.getElementById('heroTitle'), hint = document.getElementById('hint');
   const pa = document.getElementById('services'), pb = document.getElementById('about');
   const desk = matchMedia('(min-width: 821px)');
@@ -447,12 +452,13 @@ body.menu-open .hint{opacity:0;pointer-events:none}
 
   function frame() {
     if (!desk.matches) {
-      [scene, title, pa, pb, shade].forEach(el => el.removeAttribute('style'));
+      [scene, title, pa, pb, shade, beige, clSpacer].forEach(el => el.removeAttribute('style'));
       caseEls.forEach(el => el.style.transform = '');
       return;
     }
     const vw = sticky.clientWidth, vh = sticky.clientHeight;
     const p = prog;
+    clSpacer.style.height = Math.max(0, clStats.offsetHeight - 140) + innerHeight * .35 + 80 + 'px';  // + запас под наезд бежевого
 
     const t1 = ease(clamp((p - .04) / .28));   // экран → левая половина
     const t2 = ease(clamp((p - .52) / .26));   // половина → плашка 237×140
@@ -467,7 +473,15 @@ body.menu-open .hint{opacity:0;pointer-events:none}
     title.style.opacity = tf;
     shade.style.opacity = .42 * tf;
     fade(pa, clamp((p - .2) / .1) * (1 - clamp((p - .46) / .08)), 24);
-    fade(pb, clamp((p - .64) / .12), 24);
+    const pbo = clamp((p - .64) / .12);
+    fade(pb, pbo, 24);
+
+    /* бежевый блок едет быстрее страницы и наезжает на цифры */
+    const nat = beige.getBoundingClientRect().top - (+beige.dataset.ty || 0);
+    const D = innerHeight * .35;
+    const ty = D * clamp(nat / (innerHeight - D));
+    beige.dataset.ty = ty;
+    beige.style.transform = `translateY(${ty}px)`;
 
     /* лёгкий параллакс коллажа */
     if (!reduce.matches) {
@@ -504,7 +518,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
     return clamp(-stage.getBoundingClientRect().top / (stage.offsetHeight - vh));
   };
   /* сцены меняются по одной: каждый следующий шаг — только после того, как предыдущий доиграл и пользователь снова скроллит */
-  const stepFor = p => -stage.getBoundingClientRect().top < 6 ? 0 : p < .45 ? 1 : 2;
+  const stepFor = p => -stage.getBoundingClientRect().top < 6 ? 0 : p < .4 ? 1 : 2;
   const sync = () => {
     if (!desk.matches || anim) return;
     const want = stepFor(scrollP());
@@ -518,7 +532,7 @@ body.menu-open .hint{opacity:0;pointer-events:none}
   const toStep = i => {
     const vh = sticky.clientHeight, span = stage.offsetHeight - vh;
     const top = stage.getBoundingClientRect().top + scrollY;
-    scrollToY(top + span * [0, .3, .85][i]);
+    scrollToY(top + span * [0, .2, .99][i]);
   };
   hint.addEventListener('click', () => {
     if (desk.matches && step < STEPS.length - 1 && -stage.getBoundingClientRect().top < stage.offsetHeight - sticky.clientHeight) toStep(step + 1);
